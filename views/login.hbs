@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+{{>header}}
+<body>
+    {{>navbar}}
+     <div id="login" class="w-50 shadow mx-auto mt-5 p-3">
+        <form>
+        <h1 class="text-center">User Login  Form</h1>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" name="email" placeholder="Email" class="form-control">
+            <span class="text-danger" id="email-err"></span>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="password">Password</label>
+            <input type="password" name="password" placeholder="Password" class="form-control">
+            <span class="text-danger"id="password-err"></span>
+        </div>
+        <div align="right">
+            <button type="submit" class="btn btn-primary mt-4">Login</button>
+        </div>  
+        </form>      
+    </div>
+{{>footer}}
+<script>
+    const form = document.querySelector('form')
+    const emailErr = document.getElementById('email-err')
+    const passwordErr = document.getElementById('password-err')
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault()
+
+        emailErr.innerHTML=''
+        passwordErr.innerHTML=''
+        const email = form.email.value
+        const password = form.password.value
+
+        try {
+            const params = {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body:JSON.stringify({email, password})
+            }
+            const res = await fetch('/login', params)
+            const data = await res.json()
+            if(data.errors){
+               emailErr.innerHTML=data.errors.email
+               passwordErr.innerHTML=data.errors.password
+            }
+            if(data.user){
+                location.assign('/')
+            }
+        } catch(error){
+            console.log(error)
+        }
+    });
+
+</script>
+</body>
+</html>
